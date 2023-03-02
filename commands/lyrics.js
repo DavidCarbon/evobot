@@ -35,14 +35,9 @@ export
 
                 let lyricsEmbed = new MessageEmbed()
                     .setTitle(i18n.__mf("lyrics.embedTitle", { title: title }))
-                    .setDescription(lyrics)
+                    .setDescription(lyrics.length >= 4096 ? `${lyrics.substr(0, 4093)}...` : lyrics)
                     .setColor("#F8AA2A")
                     .setTimestamp();
-
-                if (lyricsEmbed.description.length >= 2048)
-                {
-                    lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2045)}...`;
-                }
 
                 return message.reply({ embeds: [lyricsEmbed] }).catch(console.error);
             }

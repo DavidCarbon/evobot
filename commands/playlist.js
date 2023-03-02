@@ -61,8 +61,10 @@ export
                         .setTimestamp();
 
                     if (playlistEmbed.description.length >= 2048)
+                    {
                         playlistEmbed.description =
                             playlistEmbed.description.substr(0, 2007) + i18n.__("playlist.playlistCharLimit");
+                    }
 
                     message
                         .reply({

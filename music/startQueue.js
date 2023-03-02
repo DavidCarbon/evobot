@@ -158,9 +158,16 @@ export async function startQueue({ message, channel })
 
     queue.player.on("error", (err) =>
     {
-        console.error(err);
-        queue.songs.shift();
-        processQueue(queue.songs[0], message);
+        try
+        {
+            console.error(err);
+            queue.songs.shift();
+            processQueue(queue.songs[0], message);
+        }
+        catch (error)
+        {
+            console.error(error);
+        }
     });
 
     queue.player.on("stateChange", async (oldState, newState) =>
@@ -188,18 +195,26 @@ export async function startQueue({ message, channel })
             {
                 queue.processing = true;
 
-                if (queue.loop && queue.songs.length > 0)
+                try
                 {
-                    let lastSong = queue.songs.shift();
-                    queue.songs.push(lastSong);
-                    queue.processing = false;
-                    processQueue(queue.songs[0], message);
+
+                    if (queue.loop && queue.songs.length > 0)
+                    {
+                        let lastSong = queue.songs.shift();
+                        queue.songs.push(lastSong);
+                        queue.processing = false;
+                        processQueue(queue.songs[0], message);
+                    }
+                    else
+                    {
+                        queue.songs.shift();
+                        queue.processing = false;
+                        processQueue(queue.songs[0], message);
+                    }
                 }
-                else
+                catch (error)
                 {
-                    queue.songs.shift();
-                    queue.processing = false;
-                    processQueue(queue.songs[0], message);
+                    console.error(error);
                 }
             }
         }

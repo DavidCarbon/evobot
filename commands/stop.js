@@ -33,7 +33,10 @@ export
                         queue.connection = null;
                     }
 
-                    queue.textChannel.send(i18n.__mf("stop.result", { author: message.author })).catch(console.error);
+                    if (queue.textChannel != null)
+                    {
+                        queue.textChannel.send(i18n.__mf("stop.result", { author: message.author })).catch(console.error);
+                    }
                 }
             }
             catch (error)
