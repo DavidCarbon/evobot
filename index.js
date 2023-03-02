@@ -1,4 +1,4 @@
-import { Client, Collection, Intents } from "discord.js";
+import { Client, Collection, GatewayIntentBits } from "discord.js";
 import { config } from "./utils/config.js";
 import { importCommands } from "./utils/importCommands.js";
 import { messageCreate } from "./utils/messageCreate.js";
@@ -9,11 +9,12 @@ const client = new Client({
     restTimeOffset: 0,
     intents:
         [
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_VOICE_STATES,
-            Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-            Intents.FLAGS.DIRECT_MESSAGES
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildVoiceStates,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.GuildMessageReactions,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.DirectMessages
         ]
 });
 
