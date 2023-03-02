@@ -4,6 +4,7 @@ import youtube from "youtube-sr";
 
 export default {
   name: "search",
+  aliases: ["ps"],
   description: i18n.__("search.description"),
   async execute(message, args) {
     if (!args.length)

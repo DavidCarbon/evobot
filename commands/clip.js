@@ -1,72 +1,63 @@
 import { i18n } from "../utils/i18n.js";
 import { existsSync } from "fs";
-import { generateQueue } from "../utils/queue.js";
-import {
-  AudioPlayerStatus,
-  createAudioPlayer,
-  createAudioResource,
-  entersState,
-  joinVoiceChannel,
-  NoSubscriberBehavior,
-  StreamType,
-  VoiceConnectionStatus
-} from "@discordjs/voice";
 
-export default {
-  name: "clip",
-  description: i18n.__("clip.description"),
-  async execute(message, args) {
-    const { channel } = message.member.voice;
-    if (!channel) return message.reply(i18n.__("clip.errorNotChannel")).catch(console.error);
+export
+    default
+    {
+        name: "clip",
+        aliases: ["c", "pc", "lp", "local play"],
+        description: i18n.__("clip.description"),
+        async execute(message, args)
+        {
+            try
+            {
+                const { channel } = message.member.voice;
 
-    const queue = message.client.queue.get(message.guild.id);
-    if (queue) return message.reply(i18n.__("clip.errorQueue"));
+                if (!channel)
+                {
+                    return message.reply(i18n.__("clip.errorNotChannel")).catch(console.error);
+                }
+                else if (message.client.queue.get(message.guild.id))
+                {
+                    return message.reply(i18n.__("clip.errorQueue"));
+                }
+                else if (!args.length)
+                {
+                    return message
+                        .reply(i18n.__mf("clip.usagesReply", { prefix: message.client.prefix }))
+                        .catch(console.error);
+                }
+                else
+                {
+                    let titleSearch = args.join(" ");
 
-    if (!args.length)
-      return message
-        .reply(i18n.__mf("clip.usagesReply", { prefix: message.client.prefix }))
-        .catch(console.error);
+                    if (titleSearch.endsWith(".mp3") || titleSearch.endsWith(".ogg"))
+                    {
+                        titleSearch = titleSearch.replace(".mp3", "").replace(".ogg", "");
+                    }
 
-    if (args[0].includes(".mp3")) args[0] = args[0].replace(".mp3", "");
-
-    if (!existsSync(`./sounds/${args[0]}.mp3`))
-      return message.reply(i18n.__("common.errorCommand")).catch(console.error);
-
-    const queueConstruct = generateQueue(message.channel, channel);
-
-    message.client.queue.set(message.guild.id, queueConstruct);
-
-    try {
-      queueConstruct.resource = createAudioResource(`./sounds/${args[0]}.mp3`, {
-        inputType: StreamType.Arbitrary
-      });
-
-      queueConstruct.player = createAudioPlayer({
-        behaviors: {
-          noSubscriber: NoSubscriberBehavior.Pause
+                    if (existsSync(`./sounds/${titleSearch}.mp3`) || existsSync(`./sounds/${titleSearch}.ogg`))
+                    {
+                        try
+                        {
+                            return message.client.commands.get("play").execute(message, titleSearch);
+                        }
+                        catch (error)
+                        {
+                            console.error(error.message);
+                            return message.reply("Audio Clip Error").catch(console.error);
+                        }
+                    }
+                    else
+                    {
+                        return message.reply(i18n.__("common.errorCommand")).catch(console.error); 
+                    }
+                }
+            }
+            catch (error)
+            {
+                console.error(error.message);
+                return message.reply("Function Clip Error").catch(console.error);
+            }
         }
-      });
-
-      queueConstruct.player.play(queueConstruct.resource);
-
-      await entersState(queueConstruct.player, AudioPlayerStatus.Playing, 5e3);
-
-      queueConstruct.connection = joinVoiceChannel({
-        channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator
-      });
-
-      await entersState(queueConstruct.connection, VoiceConnectionStatus.Ready, 30e3);
-
-      queueConstruct.connection.subscribe(queueConstruct.player);
-
-      await queueConstruct.textChannel.send(
-        i18n.__mf("play.startedPlaying", { title: `${args[0]}.mp3`, url: "" })
-      );
-    } catch (error) {
-      console.error(error.message);
-      return message.reply("error");
-    }
-  }
-};
+    };

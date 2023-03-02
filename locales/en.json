@@ -58,7 +58,7 @@
     "missingPermissionSpeak": "I cannot speak in this voice channel, make sure I have the proper permissions!",
     "queueAdded": "✅ **{title}** has been added to the queue by <@{author}>",
     "cantJoinChannel": "Could not join the channel: {error}",
-    "queueEnded": "❌ Music queue ended.",
+    "queueEnded": "❌ Music queue ended",
     "queueError": "Error: {error}",
     "startedPlaying": "🎶 Started playing: **{title}** {url}",
     "skipSong": "<@{author}> ⏩ skipped the song",
@@ -70,7 +70,7 @@
     "increasedVolume": "<@{author}> 🔊 increased the volume, the volume is now {volume}%",
     "loopSong": "<@{author}> Loop is now {loop}",
     "stopSong": "<@{author}> ⏹ stopped the music!",
-    "leaveChannel": "Leaving voice channel...",
+    "leaveChannel": "Left voice channel",
     "songNotFound": "Audio Not Found",
     "songAccessErr": "Video is age restricted, private or unavailable"
   },
@@ -83,7 +83,7 @@
     "missingPermissionSpeak": "I cannot speak in this voice channel, make sure I have the proper permissions!",
     "errorNotFoundPlaylist": "Playlist not found :(",
     "fetchingPlaylist": "⌛ fetching the playlist...",
-    "playlistCharLimit": "\nPlaylist larger than character limit...",
+    "playlistCharLimit": "\nPlaylist larger than character limit!",
     "startedPlaylist": "<@{author}> Started a playlist",
     "cantJoinChannel": "Could not join the channel: {error}"
   },
