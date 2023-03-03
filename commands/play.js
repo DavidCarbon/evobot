@@ -5,6 +5,7 @@ import { startQueue } from "../music/startQueue.js";
 import { i18n } from "../utils/i18n.js";
 import { mobileScRegex, playlistPattern } from "../utils/patterns.js";
 import { generateQueue } from "../utils/queue.js";
+import { PermissionsBitField } from "discord.js";
 
 const scdl = SoundCloud.create();
 
@@ -15,7 +16,12 @@ export
         cooldown: 3,
         aliases: ["p"],
         description: i18n.__("play.description"),
-        permissions: ["CONNECT", "SPEAK", "ADD_REACTIONS", "MANAGE_MESSAGES"],
+        permissions: [
+            PermissionsBitField.Flags.Connect,
+            PermissionsBitField.Flags.Speak,
+            PermissionsBitField.Flags.AddReactions,
+            PermissionsBitField.Flags.ManageMessages
+        ],
         async execute(message, args)
         {
             try

@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, PermissionsBitField } from "discord.js";
 import { i18n } from "../utils/i18n.js";
 
 export default {
@@ -6,7 +6,7 @@ export default {
   cooldown: 5,
   aliases: ["q"],
   description: i18n.__("queue.description"),
-  permissions: ["MANAGE_MESSAGES", "ADD_REACTIONS"],
+  permissions: [PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ManageMessages],
   async execute(message) {
     const queue = message.client.queue.get(message.guild.id);
     if (!queue || !queue.songs.length) return message.reply(i18n.__("queue.errorNotQueue"));
