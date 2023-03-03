@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { i18n } from "../utils/i18n.js";
 import youtube from "youtube-sr";
 
@@ -19,7 +19,7 @@ export default {
 
     const search = args.join(" ");
 
-    let resultsEmbed = new MessageEmbed()
+      let resultsEmbed = new EmbedBuilder()
       .setTitle(i18n.__("search.resultEmbedTitle"))
       .setDescription(i18n.__mf("search.resultEmbedDesc", { search: search }))
       .setColor("#F8AA2A");

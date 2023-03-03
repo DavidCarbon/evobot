@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { i18n } from "../utils/i18n.js";
 
 export default {
@@ -75,7 +75,7 @@ function generateQueueEmbed(message, queue) {
 
     const info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
 
-    const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
       .setTitle(i18n.__("queue.embedTitle"))
       .setThumbnail(message.guild.iconURL())
       .setColor("#F8AA2A")

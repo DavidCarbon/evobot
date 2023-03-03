@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { splitBar } from "string-progressbar";
 import { i18n } from "../utils/i18n.js";
 
@@ -21,7 +21,7 @@ export default
                 const seek = queue.resource.playbackDuration / 1000;
                 const left = song.duration - seek;
 
-                let nowPlaying = new MessageEmbed()
+                let nowPlaying = new EmbedBuilder()
                     .setTitle(i18n.__("nowplaying.embedTitle"))
                     .setDescription(`[${song.title}](${song.url})`)
                     .setColor("#F8AA2A");
