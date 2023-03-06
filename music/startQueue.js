@@ -1,13 +1,13 @@
 import
 {
-  AudioPlayerStatus,
-  createAudioPlayer,
-  entersState,
-  getVoiceConnection,
-  joinVoiceChannel,
-  NoSubscriberBehavior,
-  VoiceConnectionDisconnectReason,
-  VoiceConnectionStatus
+    AudioPlayerStatus,
+    createAudioPlayer,
+    entersState,
+    getVoiceConnection,
+    joinVoiceChannel,
+    NoSubscriberBehavior,
+    VoiceConnectionDisconnectReason,
+    VoiceConnectionStatus
 } from "@discordjs/voice";
 import { promisify } from "node:util";
 import { processQueue } from "./processQueue.js";
@@ -25,39 +25,44 @@ export async function startQueue({ message, channel })
         adapterCreator: channel.guild.voiceAdapterCreator
     });
 
-    try
-    {
-        await entersState(queue.connection, VoiceConnectionStatus.Ready, 30e3);
-    }
-    catch (error)
-    {
-        console.error(error);
-
-        getVoiceConnection(channel.guild.id)?.destroy();
-        message.client.queue.delete(message.guild.id);
-
-        return message.reply(i18n.__mf("play.cantJoinChannel", { error }));
-    }
-
     queue.connection.on("error", console.warn);
 
     queue.connection.on("stateChange", async (oldState, newState) =>
     {
+        try
+        {
+            const oldNetworking = Reflect.get(oldState, 'networking');
+            const newNetworking = Reflect.get(newState, 'networking');
+
+            const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
+            {
+                const newUdp = Reflect.get(newNetworkState, 'udp');
+                clearInterval(newUdp?.keepAliveInterval);
+            }
+
+            oldNetworking?.off('stateChange', networkStateChangeHandler);
+            newNetworking?.on('stateChange', networkStateChangeHandler);
+        }
+        catch (error)
+        {
+            console.error(error);
+        }
+
         if (newState.status === VoiceConnectionStatus.Disconnected)
         {
             if (newState.reason === VoiceConnectionDisconnectReason.Manual)
             {
-      	        queue.loop = false;
-      	        queue.songs.shift();
-      	        queue.songs = [1];
-      	        queue.player.stop(true);
+                queue.loop = false;
+                queue.songs.shift();
+                queue.songs = [1];
+                queue.player.stop(true);
                 queue.connection = null;
             }
             else if (newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014)
             {
                 try
                 {
-                  await entersState(queue.connection, VoiceConnectionStatus.Connecting, 5_000);
+                    await entersState(queue.connection, VoiceConnectionStatus.Connecting, 5_000);
                 }
                 catch
                 {
@@ -112,7 +117,7 @@ export async function startQueue({ message, channel })
             queue.songs.shift();
             queue.songs = [1];
             queue.player.stop(true);
-	        queue.connection = null;
+            queue.connection = null;
         }
         else if (!queue.readyLock && (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling))
         {
@@ -149,6 +154,20 @@ export async function startQueue({ message, channel })
         }
     });
 
+    try
+    {
+        await entersState(queue.connection, VoiceConnectionStatus.Ready, 30e3);
+    }
+    catch (error)
+    {
+        console.error(error);
+
+        getVoiceConnection(channel.guild.id)?.destroy();
+        message.client.queue.delete(message.guild.id);
+
+        return message.reply(i18n.__mf("play.cantJoinChannel", { error }));
+    }
+
     queue.player = createAudioPlayer({
         behaviors:
         {
@@ -164,28 +183,46 @@ export async function startQueue({ message, channel })
             queue.songs.shift();
             processQueue(queue.songs[0], message);
         }
-        catch (error)
-        {
+        catch (error) {
             console.error(error);
         }
     });
 
     queue.player.on("stateChange", async (oldState, newState) =>
     {
+        try
+        {
+            const oldNetworking = Reflect.get(oldState, 'networking');
+            const newNetworking = Reflect.get(newState, 'networking');
+
+            const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
+            {
+                const newUdp = Reflect.get(newNetworkState, 'udp');
+                clearInterval(newUdp?.keepAliveInterval);
+            }
+
+            oldNetworking?.off('stateChange', networkStateChangeHandler);
+            newNetworking?.on('stateChange', networkStateChangeHandler);
+        }
+        catch (error)
+        {
+            console.error(error);
+        }
+
         /** Song ends */
         if (oldState.status !== AudioPlayerStatus.Idle && newState.status === AudioPlayerStatus.Idle)
         {
-			try
-			{
-				if (!queue.collector?.ended)
-				{
-					queue.collector.stop();
-				}
-			}
-			catch 
-			{
-				/* Cannot read properties of undefined (reading 'stop') */
-			}
+            try
+            {
+                if (!queue.collector?.ended)
+                {
+                    queue.collector.stop();
+                }
+            }
+            catch
+            {
+                /* Cannot read properties of undefined (reading 'stop') */
+            }
 
             if (queue.processing || queue.player.state.status !== AudioPlayerStatus.Idle || queue.songs.length === 0)
             {
