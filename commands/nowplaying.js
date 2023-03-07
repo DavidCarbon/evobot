@@ -28,19 +28,20 @@ export default
 
                 if (song.duration > 0)
                 {
-                    nowPlaying.addField(
-                        "\u200b",
-                        new Date(seek * 1000).toISOString().substring(11, 8) +
-                        "[" +
-                        splitBar(song.duration == 0 ? seek : song.duration, seek, 20)[0] +
-                        "]" +
-                        (song.duration == 0 ? " ◉ LIVE" : new Date(song.duration * 1000).toISOString().substring(11, 8)),
-                        false
-                    );
+                    nowPlaying.addField({
+                        name: "\u200b",
+                        value:
+                            new Date(seek * 1000).toISOString().substring(11, 8) +
+                            "[" +
+                            splitBar(song.duration == 0 ? seek : song.duration, seek, 20)[0] +
+                            "]" +
+                            (song.duration == 0 ? " ◉ LIVE" : new Date(song.duration * 1000).toISOString().substring(11, 19)),
+                        inline: false
+                    });
 
                     nowPlaying.setFooter({
                         text: i18n.__mf("nowplaying.timeRemaining", {
-                            time: new Date(left * 1000).toISOString().substring(11, 8)
+                            time: new Date(left * 1000).toISOString().substring(11, 19)
                         })
                     });
                 }
