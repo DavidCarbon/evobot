@@ -28,10 +28,10 @@ export default
 
                 if (song.duration > 0)
                 {
-                    nowPlaying.addField({
+                    nowPlaying.addFields({
                         name: "\u200b",
                         value:
-                            new Date(seek * 1000).toISOString().substring(11, 8) +
+                            new Date(seek * 1000).toISOString().substring(11, 19) +
                             "[" +
                             splitBar(song.duration == 0 ? seek : song.duration, seek, 20)[0] +
                             "]" +
