@@ -27,8 +27,15 @@ client.queue = new Map();
  */
 client.on("ready", () =>
 {
-    console.log(`${client.user.username} ready!`);
-    client.user.setActivity(`${PREFIX}help and ${PREFIX}play`, { type: "LISTENING" });
+    try
+    {
+        console.log(`${client.user.username} ready!`);
+        client.user.setActivity(`${PREFIX}help and ${PREFIX}play`, { type: "LISTENING" });
+    }
+    catch (error)
+    {
+        console.error(error);
+    }
 });
 client.on("warn", (info) => console.log(info));
 client.on("error", console.error);

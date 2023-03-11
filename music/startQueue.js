@@ -25,6 +25,12 @@ export async function startQueue({ message, channel })
         adapterCreator: channel.guild.voiceAdapterCreator
     });
 
+    const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
+    {
+        const newUdp = Reflect.get(newNetworkState, 'udp');
+        clearInterval(newUdp?.keepAliveInterval);
+    }
+
     queue.connection.on("error", console.warn);
 
     queue.connection.on("stateChange", async (oldState, newState) =>
@@ -33,17 +39,8 @@ export async function startQueue({ message, channel })
         {
             if (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
             {
-                const oldNetworking = Reflect.get(oldState, 'networking');
-                const newNetworking = Reflect.get(newState, 'networking');
-
-                const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
-                {
-                    const newUdp = Reflect.get(newNetworkState, 'udp');
-                    clearInterval(newUdp?.keepAliveInterval);
-                }
-
-                oldNetworking?.off('stateChange', networkStateChangeHandler);
-                newNetworking?.on('stateChange', networkStateChangeHandler);
+                Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
+                Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
             }
         }
         catch (error)
@@ -197,17 +194,8 @@ export async function startQueue({ message, channel })
         {
             if (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
             {
-                const oldNetworking = Reflect.get(oldState, 'networking');
-                const newNetworking = Reflect.get(newState, 'networking');
-
-                const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
-                {
-                    const newUdp = Reflect.get(newNetworkState, 'udp');
-                    clearInterval(newUdp?.keepAliveInterval);
-                }
-
-                oldNetworking?.off('stateChange', networkStateChangeHandler);
-                newNetworking?.on('stateChange', networkStateChangeHandler);
+                Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
+                Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
             }
         }
         catch (error)
