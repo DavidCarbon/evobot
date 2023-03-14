@@ -79,7 +79,7 @@ export async function processQueue(song, message)
 
         if (queue.textChannel != null && !PRUNING)
         {
-            queue.textChannel.send("Searching " + song.title).catch(console.error);
+            queue.textChannel.send("Downloading: " + song.title).catch(console.error);
         }
         
         let stream = null;

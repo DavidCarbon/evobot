@@ -75,6 +75,11 @@ export
                         }
                         else
                         {
+                            if (queue.textChannel != null && !PRUNING)
+                            {
+                                queue.textChannel.send("Searching: " + args[0]).catch(console.error);
+                            }
+
                             const song = await getSong({ message, args });
 
                             if (!song)
