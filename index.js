@@ -31,6 +31,7 @@ client.on("ready", () =>
     {
         console.log(`${client.user.username} ready!`);
         client.user.setActivity(`${PREFIX}help and ${PREFIX}play`, { type: "LISTENING" });
+        console.log(`Visiting ${client.guilds.cache.size} Homes.`);
     }
     catch (error)
     {

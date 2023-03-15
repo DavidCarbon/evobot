@@ -77,10 +77,7 @@ export
                         {
                             try
                             {
-                                if (queue.textChannel != null && !PRUNING)
-                                {
-                                    queue.textChannel.send("Searching").catch(console.error);
-                                }
+                                await message.reply("Searching").catch(console.error);
                             }
                             catch (error)
                             {
