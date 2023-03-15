@@ -13,19 +13,17 @@ function botLeavesTimeout(message)
     {
         try
         {
-            const queue = message.client.queue.get(message.guild.id);
-
-            if (canModifyQueue(message.member) && !queue)
+            if (canModifyQueue(message.member) && !message.client.queue.get(message.guild.id))
             {
-                queue.player.stop();
-                if (queue.connection != null)
+                message.client.queue.get(message.guild.id).player.stop();
+                if (message.client.queue.get(message.guild.id).connection != null)
                 {
-                    if (queue.connection.state != null)
+                    if (message.client.queue.get(message.guild.id).connection.state != null)
                     {
-                        if (queue.connection.state.status !== VoiceConnectionStatus.Destroyed)
+                        if (message.client.queue.get(message.guild.id).connection.state.status !== VoiceConnectionStatus.Destroyed)
                         {
-                            queue.connection.destroy();
-                            queue.connection = null;
+                            message.client.queue.get(message.guild.id).connection.destroy();
+                            message.client.queue.get(message.guild.id).connection = null;
                         }
                     }
                 }

@@ -25,29 +25,10 @@ export async function startQueue({ message, channel })
         adapterCreator: channel.guild.voiceAdapterCreator
     });
 
-    const networkStateChangeHandler = (oldNetworkState, newNetworkState) =>
-    {
-        const newUdp = Reflect.get(newNetworkState, 'udp');
-        clearInterval(newUdp?.keepAliveInterval);
-    }
-
     queue.connection.on("error", console.warn);
 
     queue.connection.on("stateChange", async (oldState, newState) =>
     {
-        try
-        {
-            if (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
-            {
-                Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
-                Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
-            }
-        }
-        catch (error)
-        {
-            console.error(error);
-        }
-
         if (newState.status === VoiceConnectionStatus.Disconnected)
         {
             if (newState.reason === VoiceConnectionDisconnectReason.Manual)
@@ -190,19 +171,6 @@ export async function startQueue({ message, channel })
 
     queue.player.on("stateChange", async (oldState, newState) =>
     {
-        try
-        {
-            if (newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
-            {
-                Reflect.get(oldState, 'networking')?.off('stateChange', networkStateChangeHandler);
-                Reflect.get(newState, 'networking')?.on('stateChange', networkStateChangeHandler);
-            }
-        }
-        catch (error)
-        {
-            console.error(error);
-        }
-
         /** Song ends */
         if (oldState.status !== AudioPlayerStatus.Idle && newState.status === AudioPlayerStatus.Idle)
         {
