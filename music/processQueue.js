@@ -13,7 +13,9 @@ function botLeavesTimeout(message)
     {
         try
         {
-            if (canModifyQueue(message.member) && !message.client.queue.get(message.guild.id))
+            const queue = message.client.queue.get(message.guild.id);
+
+            if (canModifyQueue(message.member) && !queue)
             {
                 queue.player.stop();
                 if (queue.connection != null)
