@@ -13,9 +13,14 @@ function botLeavesTimeout(message)
     {
         try
         {
-            if (canModifyQueue(message.member) && !message.client.queue.get(message.guild.id))
+            if ((canModifyQueue(message.member) && !message.client.queue.get(message.guild.id)) || (message.guild?.me?.voice.channel?.members.size <= 1))
             {
-                message.client.queue.get(message.guild.id).player.stop();
+                /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
+                if (message.client.queue.get(message.guild.id).player != null)
+                {
+                    message.client.queue.get(message.guild.id).player.stop();
+                }
+                
                 if (message.client.queue.get(message.guild.id).connection != null)
                 {
                     if (message.client.queue.get(message.guild.id).connection.state != null)
