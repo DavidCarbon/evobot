@@ -13,6 +13,7 @@ export function generateQueue(text, voice)
         songs: [],
         loop: false,
         volume: config.DEFAULT_VOLUME || 100,
-        muted: false
+        muted: false,
+        waitTimeout: null
     };
 }

@@ -9,40 +9,48 @@ const scdl = SoundCloud.create();
 
 function botLeavesTimeout(message) 
 {
-    setTimeout(function ()
+    if (message.client.queue.get(message.guild.id))
     {
-        try
+        if (message.client.queue.get(message.guild.id).waitTimeout !== null)
         {
-            if ((canModifyQueue(message.member) && !message.client.queue.get(message.guild.id)) || (message.guild?.me?.voice.channel?.members.size <= 1))
+            clearTimeout(message.client.queue.get(message.guild.id).waitTimeout);
+        }
+
+        message.client.queue.get(message.guild.id).waitTimeout = setTimeout(function ()
+        {
+            try
             {
-                /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
-                if (message.client.queue.get(message.guild.id).player != null)
+                if ((canModifyQueue(message.member) && !message.client.queue.get(message.guild.id)) || (message.guild?.me?.voice.channel?.members.size <= 1))
                 {
-                    message.client.queue.get(message.guild.id).player.stop();
-                }
-                
-                if (message.client.queue.get(message.guild.id).connection != null)
-                {
-                    if (message.client.queue.get(message.guild.id).connection.state != null)
+                    /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
+                    if (message.client.queue.get(message.guild.id).player !== null)
                     {
-                        if (message.client.queue.get(message.guild.id).connection.state.status !== VoiceConnectionStatus.Destroyed)
+                        message.client.queue.get(message.guild.id).player.stop();
+                    }
+
+                    if (message.client.queue.get(message.guild.id).connection !== null)
+                    {
+                        if (message.client.queue.get(message.guild.id).connection.state !== null)
                         {
-                            message.client.queue.get(message.guild.id).connection.destroy();
-                            message.client.queue.get(message.guild.id).connection = null;
+                            if (message.client.queue.get(message.guild.id).connection.state.status !== VoiceConnectionStatus.Destroyed)
+                            {
+                                message.client.queue.get(message.guild.id).connection.destroy();
+                                message.client.queue.get(message.guild.id).connection = null;
+                            }
                         }
                     }
                 }
+                else if (message.client.queue.get(message.guild.id).connection !== null)
+                {
+                    botLeavesTimeout(message);
+                }
             }
-            else
+            catch (error)
             {
-                botLeavesTimeout(message);
+                console.error(error);
             }
-        }
-        catch (error)
-        {
-            console.error(error);
-        }
-    }, STAY_TIME * 1000);
+        }, STAY_TIME * 1000);
+    }
 }
 
 export async function processQueue(song, message)
@@ -80,6 +88,11 @@ export async function processQueue(song, message)
             
             await entersState(queue.player, AudioPlayerStatus.Idle, 5e3);
             return message.client.queue.delete(message.guild.id);
+        }
+        else if (message.client.queue.get(message.guild.id).waitTimeout !== null)
+        {
+            clearTimeout(message.client.queue.get(message.guild.id).waitTimeout);
+            message.client.queue.get(message.guild.id).waitTimeout = null;
         }
 
         if (queue.textChannel != null && !PRUNING)
