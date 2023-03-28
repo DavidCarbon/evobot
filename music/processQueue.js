@@ -13,6 +13,7 @@ function botLeavesTimeout(message)
     {
         if (message.client.queue.get(message.guild.id).waitTimeout !== null)
         {
+            console.log("Cleared Timeout");
             clearTimeout(message.client.queue.get(message.guild.id).waitTimeout);
         }
 
@@ -20,7 +21,7 @@ function botLeavesTimeout(message)
         {
             try
             {
-                if ((canModifyQueue(message.member) && !message.client.queue.get(message.guild.id)) || (message.guild?.me?.voice.channel?.members.size <= 1))
+                if (message.client.queue.get(message.guild.id).connection !== null || (message.guild?.me?.voice.channel?.members.size <= 1))
                 {
                     /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
                     if (message.client.queue.get(message.guild.id).player !== null)
@@ -39,10 +40,6 @@ function botLeavesTimeout(message)
                             }
                         }
                     }
-                }
-                else if (message.client.queue.get(message.guild.id).connection !== null)
-                {
-                    botLeavesTimeout(message);
                 }
             }
             catch (error)
