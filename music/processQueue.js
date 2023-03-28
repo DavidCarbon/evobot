@@ -7,49 +7,6 @@ import { canModifyQueue } from "../utils/queue.js";
 const { PRUNING, STAY_TIME } = config;
 const scdl = SoundCloud.create();
 
-function botLeavesTimeout(message) 
-{
-    if (message.client.queue.get(message.guild.id))
-    {
-        if (message.client.queue.get(message.guild.id).waitTimeout !== null)
-        {
-            console.log("Cleared Timeout");
-            clearTimeout(message.client.queue.get(message.guild.id).waitTimeout);
-        }
-
-        message.client.queue.get(message.guild.id).waitTimeout = setTimeout(function ()
-        {
-            try
-            {
-                if (message.client.queue.get(message.guild.id).connection !== null || (message.guild?.me?.voice.channel?.members.size <= 1))
-                {
-                    /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
-                    if (message.client.queue.get(message.guild.id).player !== null)
-                    {
-                        message.client.queue.get(message.guild.id).player.stop();
-                    }
-
-                    if (message.client.queue.get(message.guild.id).connection !== null)
-                    {
-                        if (message.client.queue.get(message.guild.id).connection.state !== null)
-                        {
-                            if (message.client.queue.get(message.guild.id).connection.state.status !== VoiceConnectionStatus.Destroyed)
-                            {
-                                message.client.queue.get(message.guild.id).connection.destroy();
-                                message.client.queue.get(message.guild.id).connection = null;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (error)
-            {
-                console.error(error);
-            }
-        }, STAY_TIME * 1000);
-    }
-}
-
 export async function processQueue(song, message)
 {    
     const queue = message.client.queue.get(message.guild.id);
@@ -57,7 +14,43 @@ export async function processQueue(song, message)
     {        
         try        
         {            
-            botLeavesTimeout(message);
+            if (queue.waitTimeout)
+            {
+                console.error("Cleared Timeout");
+                clearTimeout(queue.waitTimeout);
+                queue.waitTimeout = null;
+            }
+
+            queue.waitTimeout = setTimeout(function ()
+            {
+                try
+                {
+                    if (queue.connection)
+                    {
+                        /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
+                        if (queue.player)
+                        {
+                            queue.player.stop();
+                        }
+
+                        if (queue.connection)
+                        {
+                            if (queue.connection.state)
+                            {
+                                if (queue.connection.state.status !== VoiceConnectionStatus.Destroyed)
+                                {
+                                    queue.connection.destroy();
+                                    queue.connection = null;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (error)
+                {
+                    console.error(error);
+                }
+            }, STAY_TIME * 1000);
 
             if (queue.textChannel != null && !PRUNING)
             {
@@ -76,7 +69,43 @@ export async function processQueue(song, message)
     {
         if (!song)
         {
-            botLeavesTimeout(message);
+            if (queue.waitTimeout)
+            {
+                console.error("Cleared Timeout");
+                clearTimeout(queue.waitTimeout);
+                queue.waitTimeout = null;
+            }
+
+            queue.waitTimeout = setTimeout(function ()
+            {
+                try
+                {
+                    if (queue.connection)
+                    {
+                        /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
+                        if (queue.player)
+                        {
+                            queue.player.stop();
+                        }
+
+                        if (queue.connection)
+                        {
+                            if (queue.connection.state)
+                            {
+                                if (queue.connection.state.status !== VoiceConnectionStatus.Destroyed)
+                                {
+                                    queue.connection.destroy();
+                                    queue.connection = null;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (error)
+                {
+                    console.error(error);
+                }
+            }, STAY_TIME * 1000);
 
             if (queue.textChannel != null && !PRUNING)
             {
@@ -86,10 +115,11 @@ export async function processQueue(song, message)
             await entersState(queue.player, AudioPlayerStatus.Idle, 5e3);
             return message.client.queue.delete(message.guild.id);
         }
-        else if (message.client.queue.get(message.guild.id).waitTimeout !== null)
+        else if (queue.waitTimeout)
         {
-            clearTimeout(message.client.queue.get(message.guild.id).waitTimeout);
-            message.client.queue.get(message.guild.id).waitTimeout = null;
+            console.error("Cleared Timeout");
+            clearTimeout(queue.waitTimeout);
+            queue.waitTimeout = null;
         }
 
         if (queue.textChannel != null && !PRUNING)
