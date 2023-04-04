@@ -25,7 +25,7 @@ export async function processQueue(song, message)
             {
                 try
                 {
-                    if (queue.connection)
+                    if (queue.connection && !message.client.queue.get(message.guild.id))
                     {
                         /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
                         if (queue.player)
@@ -80,7 +80,7 @@ export async function processQueue(song, message)
             {
                 try
                 {
-                    if (queue.connection)
+                    if (queue.connection && !message.client.queue.get(message.guild.id))
                     {
                         /* FIX TypeError: Cannot read properties of undefined (reading 'player') */
                         if (queue.player)
