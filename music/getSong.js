@@ -1,11 +1,10 @@
 import SoundCloud from "soundcloud-downloader";
 import youtube from "youtube-sr";
-import ytdl from "ytdl-core";
 import { i18n } from "../utils/i18n.js";
 import { scRegex, videoPattern } from "../utils/patterns.js";
 import { existsSync } from "fs";
 import fetch from "node-fetch";
-
+import { video_basic_info } from "play-dl";
 const scdl = SoundCloud.create();
 
 export async function getSong({ message, args })
@@ -37,13 +36,12 @@ export async function getSong({ message, args })
     {
         try
         {
-            songInfo = await ytdl.getInfo(songLocation);
-
+            songInfo = await video_basic_info(songLocation);
             song =
             {
-                title: songInfo.videoDetails.title,
-                url: songInfo.videoDetails.video_url,
-                duration: songInfo.videoDetails.lengthSeconds
+                title: songInfo.video_details.title.toString(),
+                url: songInfo.video_details.url.toString(),
+                duration: parseInt(songInfo.video_details.durationInSec)
             };
         }
         catch (error)
@@ -110,12 +108,12 @@ export async function getSong({ message, args })
             }
             else
             {
-                songInfo = await ytdl.getInfo(`https://youtube.com/watch?v=${result.id}`);
+                songInfo = await video_basic_info(`https://youtube.com/watch?v=${result.id}`);
                 song =
                 {
-                    title: songInfo.videoDetails.title,
-                    url: songInfo.videoDetails.video_url,
-                    duration: songInfo.videoDetails.lengthSeconds
+                    title: songInfo.video_details.title.toString(),
+                    url: songInfo.video_details.url.toString(),
+                    duration: parseInt(songInfo.video_details.durationInSec)
                 };
             }
         }
