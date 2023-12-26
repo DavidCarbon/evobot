@@ -10,7 +10,7 @@ const scdl = SoundCloud.create();
 export async function processQueue(song, message)
 {    
     const queue = message.client.queue.get(message.guild.id);
-    if ((message.guild?.me?.voice.channel?.members.size <= 1) || (!song && !queue))
+    if ((message.guild?.members?.me?.voice.channel?.members.size <= 1) || (!song && !queue))
     {
         try
         {
