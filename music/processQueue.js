@@ -329,7 +329,7 @@ export async function processQueue(song, message)
             return message.channel.send(i18n.__mf("play.queueError"));
         }
     }
-    else if (queue)
+    else if (queue && queue.songs[0])
     {
         queue.songs.shift();
         processQueue(queue.songs[0], message);
