@@ -37,12 +37,20 @@ export async function getSong({ message, args })
         try
         {
             songInfo = await video_basic_info(songLocation);
-            song =
+
+            if (!songInfo == null || (songInfo.video_details.durationInSec == null))
             {
-                title: songInfo.video_details.title.toString(),
-                url: songInfo.video_details.url.toString(),
-                duration: parseInt(songInfo.video_details.durationInSec)
-            };
+                return message.reply(i18n.__("play.songNotFound")).catch(console.error);
+            }
+            else
+            {
+                song =
+                {
+                    title: songInfo.video_details.title.toString(),
+                    url: songInfo.video_details.url.toString(),
+                    duration: parseInt(songInfo.video_details.durationInSec)
+                };
+            }
         }
         catch (error)
         {
@@ -103,18 +111,25 @@ export async function getSong({ message, args })
 
             if (!result)
             {
-                message.reply(i18n.__("play.songNotFound")).catch(console.error);
-                return;
+                return message.reply(i18n.__("play.songNotFound")).catch(console.error);
             }
             else
             {
                 songInfo = await video_basic_info(`https://youtube.com/watch?v=${result.id}`);
-                song =
+
+                if ((!songInfo == null) || (songInfo.video_details.durationInSec == null))
                 {
-                    title: songInfo.video_details.title.toString(),
-                    url: songInfo.video_details.url.toString(),
-                    duration: parseInt(songInfo.video_details.durationInSec)
-                };
+                    return message.reply(i18n.__("play.songNotFound")).catch(console.error);
+                }
+                else
+                {
+                    song =
+                    {
+                        title: songInfo.video_details.title.toString(),
+                        url: songInfo.video_details.url.toString(),
+                        duration: parseInt(songInfo.video_details.durationInSec)
+                    };
+                }
             }
         }
         catch (error)

@@ -1,6 +1,6 @@
 {
   "name": "evobot",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Discord music bot built with discord.js",
   "main": "index.js",
   "author": "Erit Islami <eritislami@gmail.com> & DavidCarbon",
@@ -9,7 +9,7 @@
   "repository": "github:DavidCarbon/evobot",
   "bugs": "https://github.com/DavidCarbon/evobot/issues",
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=16.11.0"
   },
   "type": "module",
   "scripts": {
@@ -30,7 +30,7 @@
     "soundcloud-downloader": "^0.2.3",
     "string-progressbar": "^1.0.4",
     "youtube-sr": "~4.3.0",
-    "play-dl": "^1.9.6"
+    "play-dl": "^1.9.7"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^3.0.1",

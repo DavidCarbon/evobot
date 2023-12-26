@@ -18,6 +18,10 @@ export default
             else
             {
                 const song = queue.songs[0];
+                if (!song)
+                {
+                    return message.reply(i18n.__("nowplaying.errorNotQueue")).catch(console.error);
+                }
                 const seek = queue.resource.playbackDuration / 1000;
                 const left = song.duration - seek;
 
